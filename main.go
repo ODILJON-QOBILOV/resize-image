@@ -1,45 +1,31 @@
 package main
 
 import (
-	"bytes"
-	"strconv"
+	"os"
 
-	"github.com/disintegration/imaging"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/image-resizer/1/config"
+	"github.com/image-resizer/1/controllers"
+	// _ "github.com/image-resizer/1/docs"
+	"github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title Image Resizer API
+// @version 1.0
+// @description Resize images easily
 func main() {
+	config.InitDB()
 	r := gin.Default()
+	r.Use(cors.Default())
 
-	r.POST("/resize", ResizeImageAPI)
+	r.POST("/resize", controllers.ResizeImageAPI)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	r.Run()
-}
-
-func ResizeImageAPI(c *gin.Context) {
-	file, _, err := c.Request.FormFile("image")
-	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
-	defer file.Close()
-	
-	width, _ := strconv.Atoi(c.DefaultPostForm("width", "200"))
-	height, _ := strconv.Atoi(c.DefaultPostForm("height", "200"))
-
-	img, err := imaging.Decode(file)
-	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-
-	resizedImage := imaging.Resize(img, width, height, imaging.Lanczos)
-
-	var buf bytes.Buffer
-	err = imaging.Encode(&buf, resizedImage, imaging.PNG)
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
-	}
-	c.Data(200, "image/png", buf.Bytes())
+	r.Run(":" + port)
 }
