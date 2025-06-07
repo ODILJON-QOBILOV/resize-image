@@ -1,0 +1,75 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Resize images easily",
+        "title": "Image Resizer API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/resize": {
+            "post": {
+                "description": "Accepts an image file and optional width and height, returns resized image in PNG format",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "image/png"
+                ],
+                "tags": [
+                    "image"
+                ],
+                "summary": "Resize an uploaded image",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Image file to resize",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 200,
+                        "description": "Width",
+                        "name": "width",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 200,
+                        "description": "Height",
+                        "name": "height",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resized image PNG",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

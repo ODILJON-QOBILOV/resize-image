@@ -1,0 +1,51 @@
+info:
+  contact: {}
+  description: Resize images easily
+  title: Image Resizer API
+  version: "1.0"
+paths:
+  /resize:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Accepts an image file and optional width and height, returns resized
+        image in PNG format
+      parameters:
+      - description: Image file to resize
+        in: formData
+        name: image
+        required: true
+        type: file
+      - default: 200
+        description: Width
+        in: formData
+        name: width
+        type: integer
+      - default: 200
+        description: Height
+        in: formData
+        name: height
+        type: integer
+      produces:
+      - image/png
+      responses:
+        "200":
+          description: Resized image PNG
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Resize an uploaded image
+      tags:
+      - image
+swagger: "2.0"
